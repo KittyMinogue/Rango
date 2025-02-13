@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django import forms
 
 # Create your models here.
 
@@ -13,7 +14,7 @@ class Category(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super(Category, self).save(*args, **kwargs)
-        
+
     class Meta:
         verbose_name_plural = 'categories'
 
@@ -30,3 +31,31 @@ class Page(models.Model):
 
     def __str__(self):
         return self.title
+
+class PageForm(forms.ModelForm):
+    class Meta:
+        model = Page
+        fields = ['title', 'url', 'category']
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        url = cleaned_data.get('url')
+
+        if url and not url.startswitch('http://'):
+            url = f'http://{url}'
+            cleaned_data['url'] = url
+
+        return cleaned_data
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']
+        
+    name = forms.CharField(max_length=Category._meta.get_field('name').max_length)
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if Category.objects.filter(name=name).exists():
+            raise forms.ValidationError('A Category with this name already exists.')
+        return name

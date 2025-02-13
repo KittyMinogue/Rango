@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Page</title>
+</head>
+<body>
+    <h1>Add a New Page to {{ category.name }}</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Page</button>
+    </form>
+
+    <a href="{% url 'category_detail' category.id %}">Back to Category</a>
+</body>
+</html>
