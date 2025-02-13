@@ -20,7 +20,7 @@ def index(request):
     return render(request, 'rango/index.html', context=context_dict)
 
 def about(request):
-    return render(request, 'rango/about.html')
+    return render(request, 'rango/about.html', {})
 
 def show_category(request, category_name_slug):
     context_dict = {}
@@ -80,3 +80,11 @@ def add_page(request, category_name_slug):
 
     context_dict = {'form': form, 'category': category}
     return render(request, 'rango/add_page.html', context=context_dict)
+
+def some_view(request):
+    return redirect(reverse('rango:index'))
+
+def get_category_list(current_category=None):
+    return {'categories': Category.objects.all(),
+            'current_category': current_category}
+
